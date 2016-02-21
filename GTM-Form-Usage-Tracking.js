@@ -6,15 +6,13 @@
 
 	function getFormForElement(element) {
 		var parent = element.parentElement;
-		while (parent !== null &&  parent.tagName !== 'FORM') {
+		while (parent !== null &&  parent.tagName !== "FORM") {
 			parent = parent.parentElement;
 		}
 		return parent;
 	}
 
-	//named function to remove event listener
 	var mouseHover = function(e) {
-		//form = document.querySelector("#" + e.target.closest("form").id);
 		form = getFormForElement(e.target);
 		clickAction();
 	};
@@ -33,20 +31,19 @@
 			nonInteractive = 1;
 
 		var enterField = function(e) {
-			// User name, ID or convert class to ID
-			fieldName = e.target.name;
-			//fieldName = fallbackId(e);
+			// Use name, ID or convert class as fallback
+			fieldName = (e.target.id || e.target.name || e.target.getAttribute("class").replace(/ /g, "_"));
 			fieldType = e.target.type;
 			fields[fieldName] = new Date().getTime();
 			timeSpent = Math.round(fields[fieldName] - currentTime);
 
 			window.dataLayer.push({
-				'event': 'FormTracking_focus',
-				'eventCategory': 'Form: ' + form.id,
-				'eventAction': fieldName,
-				'eventLabel': 'Focus',
-				'eventValue': timeSpent,
-				'nonInteractive': nonInteractive
+				"event": "FormTracking",
+				"eventCategory": "Form: " + form.id,
+				"eventAction": fieldName,
+				"eventLabel": "Focus",
+				"eventValue": timeSpent,
+				"nonInteractive": nonInteractive
 			});
 		};
 
@@ -88,12 +85,12 @@
 					}
 
 					window.dataLayer.push({
-						'event': 'FormTracking_blur',
-						'eventCategory': 'Form: ' + form.id,
-						'eventAction': fieldName,
-						'eventLabel': eventLabel,
-						'eventValue': timeSpent,
-						'nonInteractive': nonInteractive
+						"event": "FormTracking",
+						"eventCategory": "Form: " + form.id,
+						"eventAction": fieldName,
+						"eventLabel": eventLabel,
+						"eventValue": timeSpent,
+						"nonInteractive": nonInteractive
 					});
 				}
 				delete fields[fieldName];
@@ -118,20 +115,6 @@
 
 			//remove eventlistener after event was triggered once, to avoid multiple event listeners on focus/blur/change
 			form.removeEventListener("mouseover", mouseHover, false);
-		}
-
-		function fallbackId(e) {
-			switch (!0) {
-				case (fields.hasOwnProperty(name)):
-					fieldName = e.target.name;
-					break;
-				case (fields.hasOwnProperty(id)):
-					fieldName = e.target.id;
-					break;
-				default:
-					fieldName = e.target.getAttribute("class").replace(/ /g, "_");
-					e.target.setAttribute("class", fieldName);
-			}
 		}
 	}
 })();
